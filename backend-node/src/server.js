@@ -146,9 +146,12 @@ const startServer = async () => {
   try {
     await database.connect();
     logger.info('Database connected successfully');
+    const { ensureDemoUsers } = require('./seed');
+    await ensureDemoUsers().catch((e) => logger.warn('Auto demo user seed notice:', e.message));
   } catch (dbError) {
     logger.error(`Database connection failed (${dbError.message}). Ensure MONGODB_URI is set in Render Environment.`);
   }
+
 
   // Connect to Redis in background
   try {

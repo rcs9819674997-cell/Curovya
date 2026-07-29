@@ -649,4 +649,9 @@ async function ensureDemoDoctorAppointments() {
   }
 }
 
-seedData();
+module.exports = { seedData, ensureDemoUsers, ensureDemoDoctorAppointments };
+
+if (require.main === module) {
+  seedData();
+}
+
