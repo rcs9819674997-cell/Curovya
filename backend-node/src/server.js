@@ -56,19 +56,27 @@ if (config.nodeEnv !== 'test') {
 }
 
 const getHealthStatus = (req, res) => {
-  const dbStatus = database.isConnected() ? 'connected' : 'disconnected';
+  const dbConnected = database.isConnected();
+  const dbStatus = dbConnected ? 'connected' : 'disconnected';
   const redisStatus = redis.isConnected() ? 'connected' : 'disconnected';
+  const isCustomMongoUri = Boolean(process.env.MONGODB_URI || process.env.MONGO_URL);
+
   const health = {
-    status: 'ok',
+    status: dbConnected ? 'ok' : 'error',
     uptime: process.uptime(),
     timestamp: Date.now(),
-    database: dbStatus,
+    database: {
+      status: dbStatus,
+      env_configured: isCustomMongoUri,
+      message: isCustomMongoUri ? 'MONGODB_URI configured' : 'MONGODB_URI missing in environment variables!',
+    },
     redis: redisStatus,
     env: config.nodeEnv,
   };
-  const statusCode = dbStatus === 'connected' ? 200 : 503;
+  const statusCode = dbConnected ? 200 : 503;
   res.status(statusCode).json(health);
 };
+
 
 app.get('/health', getHealthStatus);
 app.get('/api/health', getHealthStatus);

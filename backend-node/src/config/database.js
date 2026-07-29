@@ -57,9 +57,14 @@ class Database {
 
       return this.connection;
     } catch (error) {
-      logger.error('MongoDB connection failed:', error);
+      logger.error('MongoDB connection failed:', error?.message || error);
+      setTimeout(() => {
+        logger.info('Retrying MongoDB connection...');
+        this.connect().catch(() => {});
+      }, 5000);
       throw error;
     }
+
   }
 
   async disconnect() {
