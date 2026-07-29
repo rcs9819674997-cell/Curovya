@@ -17,8 +17,9 @@ class Database {
         heartbeatFrequencyMS: 10000,
         retryWrites: true,
         retryReads: true,
-        bufferCommands: false,
+        bufferCommands: true,
       };
+
 
       const connectOptions = {
         ...options,

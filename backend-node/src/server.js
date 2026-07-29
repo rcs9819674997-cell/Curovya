@@ -73,8 +73,20 @@ const getHealthStatus = (req, res) => {
 app.get('/health', getHealthStatus);
 app.get('/api/health', getHealthStatus);
 
+// Middleware to ensure Database is connected before executing API endpoints
+app.use('/api', (req, res, next) => {
+  if (req.path === '/health') return next();
+  if (!database.isConnected()) {
+    return res.status(503).json({
+      success: false,
+      detail: 'Database connection is initializing or unavailable. Please check MONGODB_URI in backend environment settings.',
+    });
+  }
+  next();
+});
 
 // API routes
+
 app.use('/api/auth', authRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/appointments', appointmentRoutes);
