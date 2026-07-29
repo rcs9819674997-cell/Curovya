@@ -86,8 +86,10 @@ const login = asyncHandler(async (req, res) => {
     clinic_id: user.clinic_id,
   });
 
-  // Cache user in Redis
-  await redis.setSession(user.id, sanitizeUser(user.toObject()));
+  // Cache user in Redis (non-blocking)
+  redis.setSession(user.id, sanitizeUser(user.toObject())).catch(err => {
+    logger.error('Redis session caching failed:', err);
+  });
 
   logger.info('User logged in successfully', { userId: user.id, email: user.email });
 
