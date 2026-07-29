@@ -17,7 +17,10 @@ services:
       - key: MONGODB_URI
         sync: false
       - key: REDIS_URL
-        sync: false
+        fromService:
+          type: redis
+          name: hamrodoctor-redis
+          property: connectionString
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRES_IN
@@ -28,3 +31,8 @@ services:
         value: EPAYTEST
       - key: ESEWA_SECRET_KEY
         value: 8gBmpyNKaAbJwXch
+
+  - type: redis
+    name: hamrodoctor-redis
+    region: singapore
+    plan: free # or starter
