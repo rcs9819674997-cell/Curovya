@@ -42,7 +42,7 @@ const transactionSchema = new mongoose.Schema({
 
 // Indexes
 transactionSchema.index({ user_id: 1, created_at: -1 });
-transactionSchema.index({ transaction_uuid: 1 });
 transactionSchema.index({ status: 1 });
+
 
 module.exports = mongoose.model('Transaction', transactionSchema);

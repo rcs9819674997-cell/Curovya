@@ -83,9 +83,9 @@ const userSchema = new mongoose.Schema({
 });
 
 // Indexes for better query performance
-userSchema.index({ email: 1 });
 userSchema.index({ phone: 1 });
 userSchema.index({ role: 1 });
+
 userSchema.index({ clinic_id: 1 });
 userSchema.index({ doctor_id: 1 });
 userSchema.index({ 'subscription.active': 1 });
