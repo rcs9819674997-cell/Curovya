@@ -116,59 +116,57 @@ app.use(errorHandler);
 
 // Start server
 const startServer = async () => {
+  // Start HTTP server immediately so Render detects port binding
+  const server = app.listen(config.port, () => {
+    logger.info(`Server running on port ${config.port} in ${config.nodeEnv} mode`);
+    logger.info(`Health check available at http://localhost:${config.port}/health`);
+  });
+
+  // Connect to database in background
   try {
-    // Connect to database
     await database.connect();
     logger.info('Database connected successfully');
+  } catch (dbError) {
+    logger.error(`Database connection failed (${dbError.message}). Ensure MONGODB_URI is set in Render Environment.`);
+  }
 
-    // Connect to Redis (optional/resilient)
-    try {
-      await redis.connect();
-      logger.info('Redis connected successfully');
-    } catch (redisError) {
-      logger.warn(`Redis connection failed (${redisError.message}). Operating backend without Redis caching.`);
-    }
+  // Connect to Redis in background
+  try {
+    await redis.connect();
+    logger.info('Redis connected successfully');
+  } catch (redisError) {
+    logger.warn(`Redis connection failed (${redisError.message}). Operating backend without Redis caching.`);
+  }
 
-
-    // Start listening
-    const server = app.listen(config.port, () => {
-      logger.info(`Server running on port ${config.port} in ${config.nodeEnv} mode`);
-      logger.info(`Health check available at http://localhost:${config.port}/health`);
+  // Graceful shutdown
+  const gracefulShutdown = async (signal) => {
+    logger.info(`${signal} received. Starting graceful shutdown...`);
+    
+    server.close(async () => {
+      logger.info('HTTP server closed');
+      
+      try {
+        await database.disconnect();
+        await redis.disconnect();
+        logger.info('Database and Redis connections closed');
+        process.exit(0);
+      } catch (error) {
+        logger.error('Error during shutdown:', error);
+        process.exit(1);
+      }
     });
 
-    // Graceful shutdown
-    const gracefulShutdown = async (signal) => {
-      logger.info(`${signal} received. Starting graceful shutdown...`);
-      
-      server.close(async () => {
-        logger.info('HTTP server closed');
-        
-        try {
-          await database.disconnect();
-          await redis.disconnect();
-          logger.info('Database and Redis connections closed');
-          process.exit(0);
-        } catch (error) {
-          logger.error('Error during shutdown:', error);
-          process.exit(1);
-        }
-      });
+    // Force shutdown after 10 seconds
+    setTimeout(() => {
+      logger.error('Forced shutdown after timeout');
+      process.exit(1);
+    }, 10000);
+  };
 
-      // Force shutdown after 10 seconds
-      setTimeout(() => {
-        logger.error('Forced shutdown after timeout');
-        process.exit(1);
-      }, 10000);
-    };
-
-    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
-
-  } catch (error) {
-    logger.error('Failed to start server:', error);
-    process.exit(1);
-  }
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 };
+
 
 // Start server if not in test mode
 if (config.nodeEnv !== 'test') {

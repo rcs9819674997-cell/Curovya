@@ -20,12 +20,13 @@ class Database {
         bufferCommands: false,
       };
 
-      const connectOptions = { ...options };
-      if (config.dbName && !config.mongoUrl.includes('/', config.mongoUrl.indexOf('://') + 3)) {
-        connectOptions.dbName = config.dbName;
-      }
+      const connectOptions = {
+        ...options,
+        dbName: config.dbName || 'test_database',
+      };
 
       this.connection = await mongoose.connect(config.mongoUrl, connectOptions);
+
 
 
       logger.info('MongoDB connected successfully', {
