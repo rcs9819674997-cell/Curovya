@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: hamrodoctor-backend-node
+    env: node
+    region: singapore # or oregon, frankfurt, etc.
+    plan: starter # or free/standard
+    rootDir: backend-node
+    buildCommand: npm install
+    startCommand: node src/server.js
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8000
+      - key: MONGODB_URI
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CORS_ORIGIN
+        value: "*"
+      - key: ESEWA_MERCHANT_CODE
+        value: EPAYTEST
+      - key: ESEWA_SECRET_KEY
+        value: 8gBmpyNKaAbJwXch

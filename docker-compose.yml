@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend-node
+    container_name: hamrodoctor-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=production
+      - CLUSTER_MODE=true
+      - PORT=8000
+      - MONGO_URL=mongodb+srv://sahshrawan701_db_user:YjgwXl4URwN0RgCQ@cluster0.wrhp57o.mongodb.net/curovya
+      - DB_NAME=curovya
+      - REDIS_URL=redis://redis:6379
+      - CORS_ORIGIN=http://localhost:8081,http://localhost:19006,http://localhost:19000,exp://192.168.*:19000
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - hamrodoctor-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: hamrodoctor-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - hamrodoctor-network
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  hamrodoctor-network:
+    driver: bridge

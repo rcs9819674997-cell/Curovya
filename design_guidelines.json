@@ -1,0 +1,179 @@
+{
+  "theme_and_archetype": {
+    "domain": "Healthcare Super App (Nepal)",
+    "brand_name": "HamroDoctor",
+    "theme": "LIGHT",
+    "archetype": "Organic & Earthy mixed with High-Contrast Swiss",
+    "reasoning": "A healthcare application demands high trust, clarity, and cleanliness (Light theme). The exact user instructions require a dominant RED brand color palette against a clean white background, necessitating a high-contrast layout emphasizing legibility, minimal card-based layouts, and rounded corners."
+  },
+  "colors": {
+    "primary": {
+      "DEFAULT": "#DC143C",
+      "light": "#FBEAEF",
+      "dark": "#9B0E2A",
+      "gradient": "bg-gradient-to-r from-[#DC143C] to-[#E63946]"
+    },
+    "background": {
+      "app": "#F8FAFC",
+      "card": "#FFFFFF",
+      "overlay": "rgba(0, 0, 0, 0.4)"
+    },
+    "text": {
+      "primary": "#0F172A",
+      "secondary": "#64748B",
+      "disabled": "#94A3B8",
+      "inverse": "#FFFFFF"
+    },
+    "semantic": {
+      "success": {
+        "DEFAULT": "#10B981",
+        "light": "#D1FAE5"
+      },
+      "warning": {
+        "DEFAULT": "#F59E0B",
+        "light": "#FEF3C7"
+      },
+      "error": {
+        "DEFAULT": "#EF4444",
+        "light": "#FEE2E2"
+      },
+      "info": {
+        "DEFAULT": "#3B82F6",
+        "light": "#DBEAFE"
+      }
+    },
+    "border": {
+      "light": "#E2E8F0",
+      "focus": "#DC143C"
+    }
+  },
+  "typography": {
+    "font_family": {
+      "heading": "Outfit, sans-serif",
+      "body": "Inter, sans-serif"
+    },
+    "scale": {
+      "h1": "text-3xl font-bold tracking-tight text-slate-900",
+      "h2": "text-2xl font-bold tracking-tight text-slate-900",
+      "h3": "text-xl font-semibold text-slate-900",
+      "h4": "text-lg font-semibold text-slate-900",
+      "body_lg": "text-base font-normal text-slate-700",
+      "body": "text-sm font-normal text-slate-600",
+      "caption": "text-xs font-medium text-slate-500",
+      "overline": "text-[10px] font-bold uppercase tracking-wider text-slate-500"
+    }
+  },
+  "spacing_and_layout": {
+    "system": "8pt grid system",
+    "container": "max-w-md mx-auto w-full min-h-screen bg-slate-50 relative shadow-2xl overflow-hidden",
+    "screen_padding": "px-4 py-6 md:px-6",
+    "gap": {
+      "sm": "gap-2",
+      "md": "gap-4",
+      "lg": "gap-6",
+      "xl": "gap-8"
+    },
+    "border_radius": {
+      "sm": "rounded-md",
+      "md": "rounded-lg",
+      "lg": "rounded-xl",
+      "xl": "rounded-2xl",
+      "pill": "rounded-full"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "w-full bg-[#DC143C] text-white py-3.5 rounded-xl font-semibold text-base transition-transform active:scale-[0.98] flex items-center justify-center gap-2",
+      "secondary": "w-full bg-white text-[#DC143C] border border-[#DC143C] py-3.5 rounded-xl font-semibold text-base transition-transform active:scale-[0.98] flex items-center justify-center gap-2",
+      "ghost": "w-full text-slate-600 hover:bg-slate-100 py-3.5 rounded-xl font-medium text-sm transition-colors",
+      "emergency": "w-full bg-gradient-to-r from-red-600 to-red-500 text-white py-4 rounded-2xl font-bold text-lg shadow-[0_4px_20px_rgba(220,20,60,0.4)] active:scale-[0.96] flex items-center justify-center gap-3",
+      "icon": "p-2 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300 transition-colors"
+    },
+    "cards": {
+      "base": "bg-white rounded-2xl shadow-sm border border-slate-100 p-4 w-full",
+      "interactive": "bg-white rounded-2xl shadow-sm border border-slate-100 p-4 w-full active:bg-slate-50 transition-colors",
+      "highlighted": "bg-[#FBEAEF] rounded-2xl border border-[#DC143C]/20 p-4 w-full",
+      "digital_ticket": "bg-white rounded-3xl shadow-lg border-2 border-slate-100 p-6 w-full flex flex-col items-center text-center relative overflow-hidden"
+    },
+    "inputs": {
+      "text": "w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#DC143C]/20 focus:border-[#DC143C] transition-all text-sm",
+      "otp": "w-12 h-14 text-center text-2xl font-bold rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#DC143C]/20 focus:border-[#DC143C]"
+    },
+    "chips": {
+      "filter_active": "px-4 py-2 bg-[#DC143C] text-white rounded-full text-sm font-medium whitespace-nowrap shadow-sm",
+      "filter_inactive": "px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full text-sm font-medium whitespace-nowrap active:bg-slate-50"
+    },
+    "badges": {
+      "success": "px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-bold uppercase",
+      "warning": "px-2.5 py-1 bg-amber-100 text-amber-700 rounded-full text-[10px] font-bold uppercase",
+      "info": "px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] font-bold uppercase"
+    },
+    "avatars": {
+      "sm": "w-8 h-8 rounded-full object-cover",
+      "md": "w-12 h-12 rounded-full object-cover",
+      "lg": "w-16 h-16 rounded-full object-cover border-2 border-white shadow-sm"
+    },
+    "bottom_tabs": {
+      "container": "fixed bottom-0 w-full max-w-md mx-auto bg-white border-t border-slate-100 flex justify-around items-center pb-safe pt-2 z-50",
+      "item_active": "flex flex-col items-center gap-1 p-2 text-[#DC143C]",
+      "item_inactive": "flex flex-col items-center gap-1 p-2 text-slate-400 hover:text-slate-600",
+      "label": "text-[10px] font-medium"
+    }
+  },
+  "screens": {
+    "Splash": "Full-screen primary red background (#DC143C) with a white HamroDoctor logo centered. Smooth fade-out transition.",
+    "Onboarding": "3 slides. Illustration/image occupying top 60%. Bottom 40% white card (rounded-t-3xl) containing a prominent title (h2), subtitle (body), dot pagination indicator (active dot red), and a primary 'Next'/'Get Started' button.",
+    "Language_Select": "Clean white screen. H2 title 'Choose Language'. Grid of language cards (English, Nepali, Hindi, Maithili) with radio selectors. Primary 'Continue' button pinned to bottom.",
+    "Login_Signup": "Minimalist header with back button. H2 'Welcome Back'. Phone number input with country code dropdown. Primary CTA 'Send OTP'. 'Continue with Google/Facebook' social buttons below.",
+    "OTP_Verify": "H2 'Verify Phone'. 'Code sent to +977 XXXX'. 4 or 6 OTP input boxes row. 'Verify' primary button. 'Resend in 0:30' ghost text.",
+    "Patient_Dashboard": "Top nav: User avatar, greeting 'Hello, Ram', Notification bell. Section 1: Search bar (Find doctors, clinics). Section 2: Quick actions grid (Book Appointment, Lab Test, Medicines, Emergency). Section 3: Upcoming Appointment card (Horizontal layout, doctor avatar, date, time, 'View Ticket' button). Section 4: Health Summary cards.",
+    "Doctor_Discovery": "Sticky top header with search input. Scrollable horizontal row of filter chips (Specialty, Gender, Fees, Rating). Vertical scroll list of Doctor Cards (Avatar left, Name/Specialty/Rating/Fees right, 'Book Now' secondary button).",
+    "Doctor_Profile": "Top section: Doctor image, Name, Specialty, Experience, Rating. Middle section: Tab navigation (Info, Reviews). Bottom section: Horizontal scroll date selector, Grid of time slots (green = available, gray = booked). Fixed bottom bar with 'Book Appointment' button.",
+    "Appointment_Booking": "Multi-step accordion/flow. Step 1: Confirm details. Step 2: Patient selection (Self/Family member). Step 3: Payment method (Mocked eSewa, Khalti, Card icons in a grid). Fixed bottom 'Pay & Confirm' button.",
+    "Digital_Ticket": "Modal or distinct screen. White ticket card with dashed border line in middle. Top half: Token # (massive text, e.g., '12'), 'Current Serving: 8', Est. Wait Time. Bottom half: Patient name, Doctor name, Clinic address, Date/Time. QR code at the bottom.",
+    "E_Prescription": "Header 'Prescription'. Card with Doctor details top. Diagnosis section. 'Medicines' list (Medicine name, dosage pattern e.g., 1-0-1, duration). Floating Action Button or bottom CTA to 'Order Medicines' or 'Download PDF'.",
+    "Health_Records": "Timeline layout. Vertical dashed line on the left. Timeline items (dot on line, card on right). Filter by (Prescriptions, Lab Reports, X-Rays). Card contains document icon, title, date, doctor name.",
+    "Emergency": "High-contrast dark or white screen with massive red buttons. Main action: 'Call Ambulance' (Red gradient button). Grid of nearby hospitals with distances. One-tap actions for Blood Bank, Police.",
+    "Symptom_Checker": "Chat interface. AI avatar on left (gray bubbles), User on right (red tinted bubbles). Suggested quick-reply chips at the bottom above the input field.",
+    "Pharmacy": "Search bar for medicines. 'Upload Prescription' banner card (primary red background with illustration). List of ordered medicines with status trackers.",
+    "Profile_Settings": "Avatar and name top. List view of settings items (My Family, Saved Doctors, Payment Methods, Language, Help & Support, Logout) with left icon and right chevron."
+  },
+  "images": {
+    "doctor_avatar_1": {
+      "url": "https://images.unsplash.com/photo-1612349316228-5942a9b489c2?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwzfHxhc2lhbiUyMGRvY3RvciUyMHBvcnRyYWl0fGVufDB8fHx8MTc4MzM4NjgwN3ww&ixlib=rb-4.1.0&q=85",
+      "description": "Male doctor with glasses, suitable for doctor profiles"
+    },
+    "doctor_avatar_2": {
+      "url": "https://images.unsplash.com/photo-1659353888906-adb3e0041693?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwxfHxhc2lhbiUyMGRvY3RvciUyMHBvcnRyYWl0fGVufDB8fHx8MTc4MzM4NjgwN3ww&ixlib=rb-4.1.0&q=85",
+      "description": "Female doctor, suitable for doctor discovery and profile"
+    },
+    "hospital_building": {
+      "url": "https://images.pexels.com/photos/263402/pexels-photo-263402.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Modern hospital emergency room entrance, suitable for emergency screen or clinic details"
+    },
+    "ambulance": {
+      "url": "https://images.pexels.com/photos/5364345/pexels-photo-5364345.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Ambulances parked, use for emergency/ambulance calling feature"
+    },
+    "medical_lab": {
+      "url": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2OTF8MHwxfHNlYXJjaHwxfHxtZWRpY2FsJTIwbGFib3JhdG9yeXxlbnwwfHx8fDE3ODMzODY4MDd8MA&ixlib=rb-4.1.0&q=85",
+      "description": "Medical lab testing, suitable for 'Lab Test' booking cards"
+    }
+  },
+  "testing": {
+    "data_testid_rules": "All interactive and key informational elements MUST include a data-testid attribute in kebab-case. Example: data-testid='login-button', data-testid='doctor-card-1', data-testid='digital-ticket-token-number', data-testid='bottom-tab-home'."
+  },
+  "motion_and_interaction": {
+    "page_transition": "Slide in from right for new screens, slide out to right for back navigation (Standard mobile pattern).",
+    "button_press": "Scale down to 0.98 on active/press state.",
+    "modal_bottom_sheet": "Slide up from bottom with a backdrop-blur overlay. Used for Language Selection, Filter menus, and Payment confirmation.",
+    "skeleton_loading": "Use pulse animation (bg-slate-200 animate-pulse) for loading states (Doctor list, Lab results) instead of spinners."
+  },
+  "instructions_to_main_agent": {
+    "framework": "Use React JS, Tailwind CSS, and Shadcn UI (where applicable), but restrict the max width (max-w-md mx-auto) to simulate a mobile app interface. Wrap the main layout in a mobile container.",
+    "icons": "Use lucide-react icons heavily. They match the requested clean, minimal aesthetic.",
+    "ui_library": "Prefer custom raw HTML/Tailwind for cards and specific layouts over generic Shadcn components when Shadcn feels too 'dashboard-like', since this is a mobile super app.",
+    "navigation": "Implement a sticky Bottom Tab bar as the primary global navigation, hiding it only on auth/onboarding/payment screens.",
+    "dark_mode": "MVP is strictly Light Mode based on wireframe requirements. Do not apply inverse dark mode colors to surfaces."
+  }
+}

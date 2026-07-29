@@ -1,0 +1,40 @@
+{
+  "summary": "Iteration 4 (Curovya gap-fill features) testing: 24/24 backend tests passed. Verified new auth flows (forgot/reset/change-password with dev_otp round-trip and revert to Patient@123), notifications persistence + auto-creation (on ticket submit, lab status update, prescription follow-up, admin ticket reply), Support (FAQs no-auth + tickets), Lab Admin (dashboard, bookings, PATCH status triggers patient notifications for sample_collected/ready), Super Admin (overview with revenue math correct, users role filter with no password_hash leak, suspend/unsuspend cycle, clinics, tickets reply, audit-logs capturing suspend actions), RBAC (patient AND lab-admin blocked from /api/admin/*, patient blocked from /api/lab/*), Follow-up notification creation via /doctor/prescriptions with follow_up_days=7 producing type='followup' notification. Frontend smoke: super admin login lands on /(admin) tabs showing Overview (revenue Rs 1,350, metrics, pending approvals) + Users/Approvals/Tickets/Profile tabs. Forgot Password screen accessible from login via 'Forgot password?' link and renders correctly. Deprecated 'shadow*' style props detected in console (React Native web deprecation).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": [
+      {"component": "Global StyleSheet", "issue": "React Native Web deprecation: 'shadow*' style props are deprecated; use 'boxShadow'. Warning fires on multiple screens including login/forgot-password. Reference: search frontend/**/*.tsx for shadowColor / shadowOffset / shadowOpacity / shadowRadius and replace with boxShadow-compatible style."}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration4.py",
+    "/app/test_reports/pytest/iteration4_results.xml"
+  ],
+  "action_items": [
+    "Migrate deprecated React Native Web 'shadow*' style props to 'boxShadow' across StyleSheet usage to remove console warnings.",
+    "Optional: extend Playwright coverage for Patient -> Profile -> Language switch (Nepali) and Help & Support (FAQs / Contact Us / My Tickets) — code paths exist and backend endpoints all pass, so main agent can self-test.",
+    "Optional: verify Notifications tab bell badge count via /api/notifications/unread-count (backend endpoint confirmed working)."
+  ],
+  "critical_code_review_comments": [
+    "server.py is 3175 lines — file size >700, consider splitting into modules (auth, notifications, support, lab_admin, super_admin, doctor_portal).",
+    "forgot-password endpoint returns dev_otp only for existing users; ok for dev but ensure this is gated in production.",
+    "admin_users response strips password_hash / otp / reset_otp — verified via test; good.",
+    "push_notification is called consistently for lab, followup, ticket, admin reply — good coverage.",
+    "audit-logs only capture super-admin actions (approve_user, suspend_user, unsuspend_user, approve_clinic). Reply/ticket actions are not audited — consider adding _audit call inside reply_ticket."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration4.py"
+  ],
+  "success_rate": {"backend": "100% (24/24)", "frontend": "smoke-tested (login+admin+forgot-password verified)"},
+  "seed_data_creation": "Tests create TEST_-prefixed lab bookings, support tickets, and one TEST_dx prescription; existing seed data (doctors, clinics, patient/doctor/lab/super users) reused.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "All 24 backend tests in /app/backend/tests/test_iteration4.py pass against EXPO_PUBLIC_BACKEND_URL. LabBookingCreate schema uses (test_id, home_collection, date, address) — no scheduled_time. MedicineIn uses (name, dosage, duration, instructions). Prescription.symptoms is List[str]. Super admin lands on /(admin) tabs; Forgot Password link on /login navigates to /forgot-password. Only outstanding issue is the RN 'shadow*' deprecation warning.",
+  "rca_of_issue": "N/A — no functional bugs. Deprecation warning is cosmetic and does not affect functionality."
+}
