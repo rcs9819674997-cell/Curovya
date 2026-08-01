@@ -15,14 +15,15 @@ class RedisClient {
         url: config.redisUrl,
         password: config.redisPassword,
         database: config.redisDb,
+        enableOfflineQueue: false, // Prevent queuing commands when Redis is disconnected
         socket: {
+          connectTimeout: 3000,
           reconnectStrategy: (retries) => {
-            if (retries > 10) {
-              logger.error('Redis reconnection failed after 10 retries');
+            if (retries > 3) {
+              logger.error('Redis reconnection failed after 3 retries');
               return new Error('Redis reconnection failed');
             }
-            const delay = Math.min(retries * 100, 3000);
-            logger.info(`Redis reconnecting... attempt ${retries}, delay ${delay}ms`);
+            const delay = Math.min(retries * 200, 1000);
             return delay;
           },
         },
@@ -37,6 +38,11 @@ class RedisClient {
       // Subscriber for pub/sub
       this.subClient = Redis.createClient(redisConfig);
 
+      // Error handling
+      this.client.on('error', (err) => logger.error('Redis client error:', err.message));
+      this.pubClient.on('error', (err) => logger.error('Redis pub client error:', err.message));
+      this.subClient.on('error', (err) => logger.error('Redis sub client error:', err.message));
+
       await Promise.all([
         this.client.connect(),
         this.pubClient.connect(),
@@ -48,24 +54,19 @@ class RedisClient {
         db: config.redisDb,
       });
 
-      // Error handling
-      this.client.on('error', (err) => logger.error('Redis client error:', err));
-      this.pubClient.on('error', (err) => logger.error('Redis pub client error:', err));
-      this.subClient.on('error', (err) => logger.error('Redis sub client error:', err));
-
       return this.client;
     } catch (error) {
-      logger.error('Redis connection failed:', error);
-      throw error;
+      logger.warn('Redis connection unavailable. Operating backend gracefully without Redis caching.');
+      return null;
     }
   }
 
   async disconnect() {
     try {
       await Promise.all([
-        this.client?.quit(),
-        this.pubClient?.quit(),
-        this.subClient?.quit(),
+        this.client?.quit().catch(() => {}),
+        this.pubClient?.quit().catch(() => {}),
+        this.subClient?.quit().catch(() => {}),
       ]);
       logger.info('Redis connections closed');
     } catch (error) {
@@ -73,8 +74,13 @@ class RedisClient {
     }
   }
 
+  isConnected() {
+    return Boolean(this.client && this.client.isOpen);
+  }
+
   // Cache operations
   async get(key) {
+    if (!this.isConnected()) return null;
     try {
       const data = await this.client.get(key);
       return data ? JSON.parse(data) : null;
@@ -85,6 +91,7 @@ class RedisClient {
   }
 
   async set(key, value, ttl = config.redisCacheTtl) {
+    if (!this.isConnected()) return false;
     try {
       const serialized = JSON.stringify(value);
       await this.client.setEx(key, ttl, serialized);
@@ -96,6 +103,7 @@ class RedisClient {
   }
 
   async del(key) {
+    if (!this.isConnected()) return false;
     try {
       await this.client.del(key);
       return true;
@@ -106,6 +114,7 @@ class RedisClient {
   }
 
   async delPattern(pattern) {
+    if (!this.isConnected()) return 0;
     try {
       const keys = await this.client.keys(pattern);
       if (keys.length > 0) {
@@ -119,6 +128,7 @@ class RedisClient {
   }
 
   async exists(key) {
+    if (!this.isConnected()) return false;
     try {
       return await this.client.exists(key);
     } catch (error) {
@@ -129,6 +139,7 @@ class RedisClient {
 
   // Pub/Sub operations
   async publish(channel, message) {
+    if (!this.isConnected() || !this.pubClient?.isOpen) return;
     try {
       await this.pubClient.publish(channel, JSON.stringify(message));
     } catch (error) {
@@ -137,6 +148,7 @@ class RedisClient {
   }
 
   async subscribe(channel, callback) {
+    if (!this.isConnected() || !this.subClient?.isOpen) return;
     try {
       await this.subClient.subscribe(channel, (message) => {
         try {
@@ -153,6 +165,7 @@ class RedisClient {
   }
 
   async unsubscribe(channel) {
+    if (!this.isConnected() || !this.subClient?.isOpen) return;
     try {
       await this.subClient.unsubscribe(channel);
       logger.info(`Unsubscribed from channel: ${channel}`);
@@ -163,6 +176,7 @@ class RedisClient {
 
   // Rate limiting
   async rateLimit(key, limit, windowMs) {
+    if (!this.isConnected()) return true; // Allow request if Redis is offline
     try {
       const current = await this.client.incr(key);
       if (current === 1) {
@@ -190,10 +204,6 @@ class RedisClient {
 
   getClient() {
     return this.client;
-  }
-
-  isConnected() {
-    return this.client?.isOpen || false;
   }
 }
 
