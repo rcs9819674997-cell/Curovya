@@ -8,7 +8,7 @@
     "scheme": "curovyapatient",
     "userInterfaceStyle": "automatic",
     "jsEngine": "hermes",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.curovya.patient",
