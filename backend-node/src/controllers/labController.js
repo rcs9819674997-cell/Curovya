@@ -3,6 +3,7 @@ const LabBooking = require('../models/LabBooking');
 const User = require('../models/User');
 const { asyncHandler, ApiError } = require('../middleware/errorHandler');
 const { generateId } = require('../utils/helpers');
+const { pushNotification } = require('../utils/notificationHelper');
 const redis = require('../config/redis');
 const logger = require('../utils/logger');
 
@@ -59,7 +60,7 @@ const bookLabTest = asyncHandler(async (req, res) => {
     `${test.name} booked for ${date}.${home_collection ? ' Home sample collection.' : ''}`
   );
 
-  logger.info('Lab test booked', { bookingId: booking.id, patientId: req.user.sub, testId });
+  logger.info('Lab test booked', { bookingId: booking.id, patientId: req.user.sub, testId: test.id });
 
   res.status(201).json({
     success: true,
@@ -198,32 +199,7 @@ const updateLabBooking = asyncHandler(async (req, res) => {
 });
 
 
-/**
- * Helper function to push notification
- */
-async function pushNotification(userId, type, title, body, action = null) {
-  try {
-    const Notification = require('../models/Notification');
-    await Notification.create({
-      id: generateId(),
-      user_id: userId,
-      type,
-      title,
-      body,
-      read: false,
-      action,
-    });
-    
-    await redis.publish(`notification:${userId}`, {
-      type,
-      title,
-      body,
-      action,
-    });
-  } catch (error) {
-    logger.error('Failed to push notification:', error);
-  }
-}
+// pushNotification imported from ../utils/notificationHelper
 
 module.exports = {
   listLabTests,

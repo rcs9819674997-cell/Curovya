@@ -2,6 +2,7 @@ const Appointment = require('../models/Appointment');
 const { asyncHandler, ApiError } = require('../middleware/errorHandler');
 const config = require('../config');
 const { stableUid } = require('../utils/helpers');
+const { pushNotification } = require('../utils/notificationHelper');
 const logger = require('../utils/logger');
 
 /**
@@ -63,7 +64,7 @@ const generateVideoToken = asyncHandler(async (req, res) => {
       expiresAt
     );
 
-    logger.info('Video token generated', { appointmentId, userId: req.user.sub });
+    logger.info('Video token generated', { appointmentId: appointment_id, userId: req.user.sub });
 
     res.json({
       success: true,
@@ -108,7 +109,7 @@ const startVideoConsultation = asyncHandler(async (req, res) => {
     throw new ApiError(400, 'Not a video consultation');
   }
 
-  await Appointment.findByIdAndUpdate(appointment_id, {
+  await Appointment.findOneAndUpdate({ id: appointment_id }, {
     video_status: 'doctor_ready',
     video_started_at: new Date(),
   });
@@ -122,7 +123,7 @@ const startVideoConsultation = asyncHandler(async (req, res) => {
     `/video-call/${appointment_id}`
   );
 
-  logger.info('Video consultation started', { appointmentId, doctorId });
+  logger.info('Video consultation started', { appointmentId: appointment_id, doctorId });
 
   res.json({
     success: true,
@@ -150,12 +151,12 @@ const endVideoConsultation = asyncHandler(async (req, res) => {
     throw new ApiError(403, 'Not a participant');
   }
 
-  await Appointment.findByIdAndUpdate(appointment_id, {
+  await Appointment.findOneAndUpdate({ id: appointment_id }, {
     video_status: 'ended',
     video_ended_at: new Date(),
   });
 
-  logger.info('Video consultation ended', { appointmentId, userId: req.user.sub });
+  logger.info('Video consultation ended', { appointmentId: appointment_id, userId: req.user.sub });
 
   res.json({
     success: true,
@@ -195,35 +196,7 @@ const getVideoAppointmentStatus = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Helper function to push notification
- */
-async function pushNotification(userId, type, title, body, action = null) {
-  try {
-    const Notification = require('../models/Notification');
-    const { generateId } = require('../utils/helpers');
-    const redis = require('../config/redis');
-
-    await Notification.create({
-      id: generateId(),
-      user_id: userId,
-      type,
-      title,
-      body,
-      read: false,
-      action,
-    });
-    
-    await redis.publish(`notification:${userId}`, {
-      type,
-      title,
-      body,
-      action,
-    });
-  } catch (error) {
-    logger.error('Failed to push notification:', error);
-  }
-}
+// pushNotification imported from ../utils/notificationHelper
 
 module.exports = {
   generateVideoToken,

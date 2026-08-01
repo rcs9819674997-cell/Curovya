@@ -22,6 +22,5 @@ router.get('/test', (req, res) => {
   res.json({ success: true, message: 'Auth routes working' });
 });
 
-console.log('Auth routes registered');
 
 module.exports = router;

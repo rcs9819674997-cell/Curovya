@@ -124,6 +124,8 @@ const appointmentSchema = new mongoose.Schema({
 // Indexes
 appointmentSchema.index({ patient_id: 1, created_at: -1 });
 appointmentSchema.index({ doctor_id: 1, date: 1 });
+appointmentSchema.index({ doctor_id: 1, date: 1, queue_status: 1 });
+appointmentSchema.index({ booking_id: 1 });
 appointmentSchema.index({ date: 1 });
 appointmentSchema.index({ status: 1 });
 appointmentSchema.index({ queue_status: 1 });

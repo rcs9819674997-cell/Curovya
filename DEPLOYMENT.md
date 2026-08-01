@@ -5,7 +5,10 @@ This guide covers deploying the Curovya healthcare platform, which consists of a
 ## Architecture
 
 - **Backend**: Node.js with Express.js, MongoDB, Redis
-- **Frontend**: React Native with Expo Router
+- **Frontend Applications**: 
+  - `apps/patient`: Patient App (Expo / React Native)
+  - `apps/provider`: Doctor + Clinic + Labs App (Expo / React Native)
+  - `apps/admin`: Admin App (Expo / React Native)
 - **Infrastructure**: Docker Compose for containerization
 
 ## Prerequisites
@@ -69,7 +72,9 @@ LOG_FILE_PATH=./logs
 
 ### Frontend Environment Variables
 
-Create `.env.production` file in `frontend/`:
+### Frontend Environment Variables
+
+Each application in `apps/` (`apps/patient`, `apps/provider`, `apps/admin`) uses `.env` and `.env.production`:
 
 ```env
 EXPO_PUBLIC_BACKEND_URL=https://api.hamrodoctor.np
@@ -89,19 +94,27 @@ npm start     # Start server
 
 Backend will be available at `http://localhost:8000`
 
-### Start Frontend
+### Start Frontend Applications
 
+You can start any of the 3 separated apps using the root convenience scripts or directly inside their directories:
+
+**From project root:**
 ```bash
-cd frontend
-npm install
-npx expo start
+# Patient App
+npm run start:patient # or npm run web:patient
+
+# Provider App (Doctor + Clinic + Labs)
+npm run start:provider # or npm run web:provider
+
+# Admin App
+npm run start:admin # or npm run web:admin
 ```
 
-Frontend will be available at:
-- Web: `http://localhost:8081`
-- Expo Go: Scan QR code
-- iOS Simulator: Press `i`
-- Android: Press `a`
+**Or inside app folders:**
+```bash
+cd apps/patient  # or apps/provider or apps/admin
+npm start        # or npm run web
+```
 
 ## Docker Deployment
 

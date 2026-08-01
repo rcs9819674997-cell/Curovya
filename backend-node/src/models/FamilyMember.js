@@ -17,7 +17,7 @@ const familyMemberSchema = new mongoose.Schema({
   },
   relation: {
     type: String,
-    enum: ['self', 'spouse', 'father', 'mother', 'son', 'daughter', 'brother', 'sister', 'other'],
+    enum: ['self', 'spouse', 'father', 'mother', 'son', 'daughter', 'brother', 'sister', 'other', 'Self', 'Spouse', 'Father', 'Mother', 'Son', 'Daughter', 'Brother', 'Sister', 'Other'],
     required: true,
   },
   age: Number,

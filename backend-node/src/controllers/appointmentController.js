@@ -4,6 +4,7 @@ const Slot = require('../models/Slot');
 const User = require('../models/User');
 const { asyncHandler, ApiError } = require('../middleware/errorHandler');
 const { generateId, generateBookingId, formatDate, formatTime, addMinutes } = require('../utils/helpers');
+const { pushNotification } = require('../utils/notificationHelper');
 const redis = require('../config/redis');
 const logger = require('../utils/logger');
 
@@ -78,7 +79,7 @@ const bookAppointment = asyncHandler(async (req, res) => {
   await redis.del(`slots:${doctor_id}`);
   await redis.del(`slots:${doctor_id}:${slot.date}`);
 
-  logger.info('Appointment booked', { appointmentId: appointment.id, patientId: req.user.sub, doctorId });
+  logger.info('Appointment booked', { appointmentId: appointment.id, patientId: req.user.sub, doctorId: doctor_id });
 
   res.status(201).json({
     success: true,
@@ -254,33 +255,7 @@ const cancelAppointment = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Helper function to push notification
- */
-async function pushNotification(userId, type, title, body, action = null) {
-  try {
-    const Notification = require('../models/Notification');
-    await Notification.create({
-      id: generateId(),
-      user_id: userId,
-      type,
-      title,
-      body,
-      read: false,
-      action,
-    });
-    
-    // Publish to Redis for real-time updates
-    await redis.publish(`notification:${userId}`, {
-      type,
-      title,
-      body,
-      action,
-    });
-  } catch (error) {
-    logger.error('Failed to push notification:', error);
-  }
-}
+// pushNotification imported from ../utils/notificationHelper
 
 module.exports = {
   bookAppointment,

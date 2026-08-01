@@ -121,7 +121,7 @@ app.use('/api/support', supportRoutes);
 // Root endpoint
 app.get('/', (req, res) => {
   res.json({
-    service: 'HamroDoctor API',
+    service: 'Curovya API',
     version: '1.0.0',
     status: 'ok',
     timestamp: new Date().toISOString(),
@@ -190,6 +190,14 @@ const startServer = async () => {
   process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 };
 
+// Uncaught exception safety net to prevent server crashes under high concurrency
+process.on('uncaughtException', (error) => {
+  logger.error('UNCAUGHT EXCEPTION:', { message: error.message, stack: error.stack });
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error('UNHANDLED REJECTION:', { reason: reason?.message || reason });
+});
 
 // Start server if not in test mode
 if (config.nodeEnv !== 'test') {

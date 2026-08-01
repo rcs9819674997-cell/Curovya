@@ -193,7 +193,7 @@ const replyTicket = asyncHandler(async (req, res) => {
       id: generateId('notif'),
       user_id: ticket.user_id,
       title: 'Support reply received',
-      message: reply,
+      body: reply,
       type: 'system',
       is_read: false,
       created_at: new Date().toISOString(),

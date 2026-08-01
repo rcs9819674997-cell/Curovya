@@ -74,7 +74,7 @@ const createTicket = asyncHandler(async (req, res) => {
       id: generateId('notif'),
       user_id: userId,
       title: 'Support ticket received',
-      message: `We received your ticket "${subject}". We'll respond within 24 hours.`,
+      body: `We received your ticket "${subject}". We'll respond within 24 hours.`,
       type: 'system',
       read: false,
       created_at: now,

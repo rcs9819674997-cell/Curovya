@@ -1,0 +1,17 @@
+{
+  "name": "curovya-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Curovya Healthcare Platform Monorepo",
+  "scripts": {
+    "start:patient": "npm --prefix apps/patient start",
+    "start:provider": "npm --prefix apps/provider start",
+    "start:admin": "npm --prefix apps/admin start",
+    "web:patient": "npm --prefix apps/patient run web",
+    "web:provider": "npm --prefix apps/provider run web",
+    "web:admin": "npm --prefix apps/admin run web",
+    "lint:patient": "npm --prefix apps/patient run lint",
+    "lint:provider": "npm --prefix apps/provider run lint",
+    "lint:admin": "npm --prefix apps/admin run lint"
+  }
+}

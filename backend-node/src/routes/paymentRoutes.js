@@ -11,6 +11,7 @@ router.get('/failure', paymentController.paymentFailure);
 router.get('/:tx_uuid/status', authenticate, paymentController.getPaymentStatus);
 
 // Subscription routes
+router.get('/subscription-plan', paymentController.getSubscriptionPlan);
 router.get('/subscription/plan', paymentController.getSubscriptionPlan);
 router.get('/subscription/me', authenticate, paymentController.getMySubscription);
 router.post('/subscription/subscribe', authenticate, paymentController.subscribe);

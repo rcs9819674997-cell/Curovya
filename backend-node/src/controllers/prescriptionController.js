@@ -113,7 +113,7 @@ const createPrescription = asyncHandler(async (req, res) => {
       id: generateId('notif'),
       user_id: patient_id,
       title: 'New prescription available',
-      message: `${doctor.name} has issued a prescription for ${diagnosis}.`,
+      body: `${doctor.name} has issued a prescription for ${diagnosis}.`,
       type: 'prescription',
       is_read: false,
       created_at: now,

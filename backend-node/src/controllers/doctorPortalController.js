@@ -346,7 +346,7 @@ const completeCurrentPatient = asyncHandler(async (req, res) => {
     completed_at: new Date(),
   });
 
-  logger.info('Patient completed', { doctorId, appointmentId });
+  logger.info('Patient completed', { doctorId, appointmentId: appointment_id });
 
   res.json({
     success: true,
@@ -379,7 +379,7 @@ const markNoShow = asyncHandler(async (req, res) => {
   });
 
 
-  logger.info('Patient marked as no-show', { doctorId, appointmentId });
+  logger.info('Patient marked as no-show', { doctorId, appointmentId: appointment_id });
 
   res.json({
     success: true,
@@ -420,7 +420,7 @@ const skipPatient = asyncHandler(async (req, res) => {
     called_at: null,
   });
 
-  logger.info('Patient skipped', { doctorId, appointmentId });
+  logger.info('Patient skipped', { doctorId, appointmentId: appointment_id });
 
   res.json({
     success: true,
@@ -450,7 +450,7 @@ const recallPatient = asyncHandler(async (req, res) => {
     queue_status: 'waiting',
   });
 
-  logger.info('Patient recalled', { doctorId, appointmentId });
+  logger.info('Patient recalled', { doctorId, appointmentId: appointment_id });
 
   res.json({
     success: true,

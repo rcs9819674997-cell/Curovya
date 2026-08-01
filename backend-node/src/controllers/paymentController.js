@@ -10,7 +10,7 @@ const logger = require('../utils/logger');
 
 const PLUS_PLAN = {
   id: 'plus_monthly',
-  name: 'HamroDoctor Plus',
+  name: 'Curovya Plus',
   price: 199,
   currency: 'NPR',
   period: 'monthly',
@@ -178,17 +178,20 @@ const finalizePayment = asyncHandler(async (transaction) => {
     const exp = new Date(now);
     exp.setDate(exp.getDate() + 30);
 
-    await User.findByIdAndUpdate(userId, {
-      subscription: {
-        active: true,
-        plan: PLUS_PLAN.name,
-        price: PLUS_PLAN.price,
-        payment_method: 'esewa',
-        started_at: now,
-        expires_at: exp,
-        transaction_uuid: transaction.transaction_uuid,
-      },
-    });
+    await User.findOneAndUpdate(
+      { id: userId },
+      {
+        subscription: {
+          active: true,
+          plan: PLUS_PLAN.name,
+          price: PLUS_PLAN.price,
+          payment_method: 'esewa',
+          started_at: now,
+          expires_at: exp,
+          transaction_uuid: transaction.transaction_uuid,
+        },
+      }
+    );
 
     return `&plan=plus&expires_at=${exp.toISOString()}`;
   }
@@ -234,7 +237,7 @@ const finalizePayment = asyncHandler(async (transaction) => {
     transaction_uuid: transaction.transaction_uuid,
   });
 
-  await Slot.findByIdAndUpdate(slot.id, { is_booked: true });
+  await Slot.findOneAndUpdate({ id: slot.id }, { is_booked: true });
 
   return `&appointment_id=${appointment.id}`;
 });
@@ -285,14 +288,14 @@ const verifyPayment = asyncHandler(async (req, res) => {
   }
 
   if (!verified) {
-    await Transaction.findByIdAndUpdate(transaction._id, { status: 'failed' });
+    await Transaction.findOneAndUpdate({ transaction_uuid: tx_uuid }, { status: 'failed' });
     return res.redirect(`${returnUrl}?status=failure&tx_uuid=${tx_uuid}`);
   }
 
-  await Transaction.findByIdAndUpdate(transaction._id, { status: 'completed' });
+  await Transaction.findOneAndUpdate({ transaction_uuid: tx_uuid }, { status: 'completed' });
   const extra = await finalizePayment(transaction) || '';
 
-  logger.info('Payment verified successfully', { txUuid, userId: transaction.user_id });
+  logger.info('Payment verified successfully', { txUuid: tx_uuid, userId: transaction.user_id });
 
   res.redirect(`${returnUrl}?status=success&tx_uuid=${tx_uuid}${extra}`);
 });
@@ -305,7 +308,7 @@ const paymentFailure = asyncHandler(async (req, res) => {
 
   const transaction = await Transaction.findOne({ transaction_uuid: tx_uuid });
   if (transaction) {
-    await Transaction.findByIdAndUpdate(transaction._id, { status: 'failed' });
+    await Transaction.findOneAndUpdate({ transaction_uuid: tx_uuid }, { status: 'failed' });
   }
 
   const returnUrl = transaction?.return_url || '/';
@@ -383,9 +386,9 @@ const subscribe = asyncHandler(async (req, res) => {
     expires_at: exp,
   };
 
-  await User.findOneAndUpdate({ id: userId }, { subscription });
+  await User.findOneAndUpdate({ id: userId }, { subscription }, { new: true });
 
-  logger.info('User subscribed', { userId, plan: PLUS_PLAN.name });
+  logger.info('User subscribed', { userId, plan: PLUS_PLAN.name, payment_method });
 
   res.json({
     active: true,
@@ -401,7 +404,7 @@ const subscribe = asyncHandler(async (req, res) => {
  */
 const cancelSubscription = asyncHandler(async (req, res) => {
   const userId = req.user.id || req.user.sub;
-  await User.findOneAndUpdate({ id: userId }, { $unset: { subscription: '' } });
+  await User.findOneAndUpdate({ id: userId }, { $unset: { subscription: '' } }, { new: true });
 
   logger.info('User cancelled subscription', { userId });
 

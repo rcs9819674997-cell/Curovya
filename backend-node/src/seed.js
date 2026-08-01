@@ -602,6 +602,16 @@ async function ensureDemoUsers() {
       is_verified: true,
       language: 'en',
     },
+    {
+      id: 'super-admin-2',
+      full_name: 'System Admin',
+      email: 'admin@hamrodoctor.np',
+      phone: '+9779855555556',
+      password_hash: await hashPassword('Admin@123'),
+      role: 'super_admin',
+      is_verified: true,
+      language: 'en',
+    },
   ];
 
   for (const user of demoUsers) {
