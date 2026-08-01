@@ -17,13 +17,15 @@ const Appointment = require('./models/Appointment');
 
 const { hashPassword, generateId, formatDate, addDays, generateBookingId } = require('./utils/helpers');
 
-const seedData = async () => {
+const seedData = async (autoExit = true) => {
   try {
-    // Connect to database
-    await mongoose.connect(config.mongoUrl, {
-      dbName: config.dbName,
-    });
-    logger.info('Connected to database for seeding');
+    // Connect to database if not connected
+    if (mongoose.connection.readyState !== 1) {
+      await mongoose.connect(config.mongoUrl, {
+        dbName: config.dbName,
+      });
+      logger.info('Connected to database for seeding');
+    }
 
     // Force re-seed demo data
     logger.info('Forcing re-seed of demo data');
@@ -33,7 +35,9 @@ const seedData = async () => {
     await LabTest.deleteMany({ id: { $in: ['lab-1', 'lab-2', 'lab-3', 'lab-4', 'lab-5', 'lab-6', 'lab-7', 'lab-8'] } });
     await Emergency.deleteMany({ id: { $in: ['em-1', 'em-2', 'em-3', 'em-4', 'em-5', 'em-6', 'em-7', 'em-8'] } });
     await Clinic.deleteMany({ id: { $in: ['clinic-1', 'clinic-2'] } });
-    // Clean up leftover test users from test suites
+    await Prescription.deleteMany({ patient_id: { $in: ['patient-demo', 'patient-2'] } });
+    await HealthRecord.deleteMany({ patient_id: { $in: ['patient-demo', 'patient-2'] } });
+    await Appointment.deleteMany({ patient_id: { $in: ['patient-demo', 'patient-2'] } });
     await User.deleteMany({ email: { $regex: /^(test-recep|walkin-)/ } });
 
     
@@ -529,11 +533,11 @@ const seedData = async () => {
     await ensureDemoDoctorAppointments();
 
     logger.info('Seed data completed successfully');
-    process.exit(0);
+    if (autoExit) process.exit(0);
 
   } catch (error) {
     logger.error('Seed data failed:', error);
-    process.exit(1);
+    if (autoExit) process.exit(1);
   }
 };
 
