@@ -41,7 +41,7 @@ export default function Onboarding() {
   const finish = async (lang: string) => {
     await setLanguage(lang);
     await storage.setItem("hd_onboarded", true);
-    router.replace("/(auth)/login");
+    router.replace("/(auth)/signup");
   };
 
   if (showLang) {

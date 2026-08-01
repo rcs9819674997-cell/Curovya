@@ -9,6 +9,19 @@ export interface User {
   phone: string;
   role: string;
   is_verified: boolean;
+  is_approved?: boolean;
+  license_number?: string;
+  specialty?: string;
+  qualification?: string;
+  experience_years?: number;
+  clinic_name?: string;
+  clinic_address?: string;
+  consultation_fee?: number;
+  languages?: string[];
+  lab_name?: string;
+  lab_address?: string;
+  departments?: string[];
+  test_categories?: string[];
   language: string;
   doctor_id?: string | null;
   clinic_id?: string | null;
@@ -21,6 +34,26 @@ export interface User {
   } | null;
 }
 
+export interface SignupPayload {
+  full_name: string;
+  email: string;
+  phone: string;
+  password: string;
+  role: string;
+  license_number?: string;
+  specialty?: string;
+  qualification?: string;
+  experience_years?: number;
+  clinic_name?: string;
+  clinic_address?: string;
+  consultation_fee?: number;
+  languages?: string[];
+  lab_name?: string;
+  lab_address?: string;
+  departments?: string[];
+  test_categories?: string[];
+}
+
 const PROVIDER_ROLES = ["doctor", "clinic_admin", "receptionist", "lab_admin"];
 
 interface AuthCtx {
@@ -29,7 +62,7 @@ interface AuthCtx {
   language: string;
   setLanguage: (lang: string) => Promise<void>;
   login: (email: string, password: string) => Promise<User>;
-  signup: (name: string, email: string, phone: string, password: string, role: string) => Promise<{ user: User; dev_otp?: string }>;
+  signup: (payload: SignupPayload) => Promise<{ user: User; dev_otp?: string }>;
   verifyOtp: (email: string, otp: string) => Promise<void>;
   resendOtp: (email: string) => Promise<{ dev_otp?: string }>;
   logout: () => Promise<void>;
@@ -73,29 +106,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const login: AuthCtx["login"] = async (email, password) => {
-    const res = await api.post<{ access_token: string; user: User }>(
+    const res = await api.post<{ access_token: string; user: User; is_pending_approval?: boolean; message?: string }>(
       "/auth/login",
       { email, password },
       false,
     );
+
+    if (res.is_pending_approval || (res.user && res.user.is_approved === false)) {
+      if (res.access_token) await setToken(res.access_token);
+      setUser(res.user);
+      const err: any = new Error(res.message || "Account pending admin verification.");
+      err.is_pending_approval = true;
+      err.user = res.user;
+      throw err;
+    }
+
     // Provider app only allows provider roles
     if (!PROVIDER_ROLES.includes(res.user.role)) {
       throw new Error("Access denied. This app is for healthcare providers only.");
     }
+
     await setToken(res.access_token);
     setUser(res.user);
     return res.user;
   };
 
-  const signup: AuthCtx["signup"] = async (full_name, email, phone, password, role = "doctor") => {
-    // Validate the role is a valid provider role
-    const effectiveRole = PROVIDER_ROLES.includes(role) ? role : "doctor";
+  const signup: AuthCtx["signup"] = async (payload) => {
+    const effectiveRole = PROVIDER_ROLES.includes(payload.role) ? payload.role : "doctor";
     const res = await api.post<{ access_token: string; user: User; dev_otp?: string }>(
       "/auth/signup",
-      { full_name, email, phone, password, role: effectiveRole },
+      { ...payload, role: effectiveRole },
       false,
     );
-    await setToken(res.access_token);
+
+    if (res.access_token) {
+      await setToken(res.access_token);
+    }
     setUser(res.user);
     return { user: res.user, dev_otp: res.dev_otp };
   };

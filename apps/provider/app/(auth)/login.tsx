@@ -24,6 +24,9 @@ export default function Login() {
     setBusy(true);
     try {
       const u = await login(email.trim().toLowerCase(), password);
+      if (u.is_approved === false) {
+        return router.replace("/(auth)/pending-verification");
+      }
       if (u.role === "doctor") router.replace("/(doctor)");
       else if (u.role === "clinic_admin" || u.role === "receptionist") router.replace("/(clinic)");
       else if (u.role === "lab_admin") router.replace("/(lab)");
@@ -31,6 +34,9 @@ export default function Login() {
         setErr("This account is not a provider account. Please use the Curovya patient or admin app.");
       }
     } catch (e: any) {
+      if (e?.is_pending_approval) {
+        return router.replace("/(auth)/pending-verification");
+      }
       setErr(e?.detail || e?.message || "Login failed. Please try again.");
     } finally {
       setBusy(false);

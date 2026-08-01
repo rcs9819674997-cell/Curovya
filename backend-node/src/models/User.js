@@ -58,6 +58,20 @@ const userSchema = new mongoose.Schema({
   },
   doctor_id: String,
   clinic_id: String,
+  // Provider Onboarding Credentials
+  license_number: { type: String, trim: true },
+  specialty: { type: String, trim: true },
+  qualification: { type: String, trim: true },
+  experience_years: { type: Number, default: 0 },
+  clinic_name: { type: String, trim: true },
+  clinic_address: { type: String, trim: true },
+  consultation_fee: { type: Number, default: 0 },
+  languages: [{ type: String }],
+  lab_name: { type: String, trim: true },
+  lab_address: { type: String, trim: true },
+  departments: [{ type: String }],
+  test_categories: [{ type: String }],
+  rejection_reason: { type: String, default: '' },
   subscription: {
     active: {
       type: Boolean,

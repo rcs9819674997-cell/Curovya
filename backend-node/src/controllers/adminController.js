@@ -101,8 +101,15 @@ const approveUser = asyncHandler(async (req, res) => {
   user.is_verified = true;
   await user.save();
 
+  if (user.doctor_id) {
+    await Doctor.findOneAndUpdate({ id: user.doctor_id }, { is_approved: true });
+  }
+  if (user.clinic_id) {
+    await Clinic.findOneAndUpdate({ id: user.clinic_id }, { is_approved: true });
+  }
+
   await logAudit(req.user, 'approve_user', user_id);
-  res.json({ ok: true });
+  res.json({ ok: true, user: { id: user.id, is_approved: true } });
 });
 
 /**

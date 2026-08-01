@@ -18,6 +18,7 @@ export default function Index() {
       // brief splash pause for polish
       setTimeout(() => {
         if (!seen) router.replace("/onboarding");
+        else if (user && user.is_approved === false) router.replace("/(auth)/pending-verification");
         else if (user?.role === "doctor") router.replace("/(doctor)");
         else if (user?.role === "clinic_admin" || user?.role === "receptionist") router.replace("/(clinic)");
         else if (user?.role === "lab_admin") router.replace("/(lab)");

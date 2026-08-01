@@ -1,14 +1,26 @@
-# Add project specific ProGuard rules here.
-# By default, the flags in this file are appended to flags specified
-# in /usr/local/Cellar/android-sdk/24.3.3/tools/proguard/proguard-android.txt
-# You can edit the include path and order by changing the proguardFiles
-# directive in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Project specific ProGuard rules for Curovya Patient
 
-# react-native-reanimated
+# React Native & Hermes core
+-keep class com.facebook.react.** { *; }
+-keep class com.facebook.hermes.** { *; }
+-keep class com.facebook.jni.** { *; }
+-keep class com.facebook.soloader.** { *; }
+
+# Expo Modules
+-keep class expo.modules.** { *; }
+
+# Agora RTC SDK
+-keep class io.agora.** { *; }
+
+# Reanimated & Gesture Handler
 -keep class com.swmansion.reanimated.** { *; }
--keep class com.facebook.react.turbomodule.** { *; }
+-keep class com.swmansion.gesturehandler.** { *; }
 
-# Add any project specific keep options here:
+# Native UI & Navigation
+-keep class com.th3rdwave.safeareacontext.** { *; }
+-keep class com.swmansion.rnscreens.** { *; }
+
+# Keep all native method declarations
+-keepclasseswithmembernames class * {
+    native <methods>;
+}

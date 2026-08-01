@@ -1,4 +1,6 @@
 const User = require('../models/User');
+const Doctor = require('../models/Doctor');
+const Clinic = require('../models/Clinic');
 const { generateAccessToken, generateRefreshToken } = require('../middleware/auth');
 const { hashPassword, verifyPassword, generateOTP, generateId, addMinutes, sanitizeUser } = require('../utils/helpers');
 const { asyncHandler, ApiError } = require('../middleware/errorHandler');
@@ -9,7 +11,25 @@ const logger = require('../utils/logger');
  * User signup
  */
 const signup = asyncHandler(async (req, res) => {
-  const { full_name, email, phone, password, role = 'patient' } = req.body;
+  const {
+    full_name,
+    email,
+    phone,
+    password,
+    role = 'patient',
+    license_number,
+    specialty,
+    qualification,
+    experience_years,
+    clinic_name,
+    clinic_address,
+    consultation_fee,
+    languages,
+    lab_name,
+    lab_address,
+    departments,
+    test_categories,
+  } = req.body;
 
   // Check if user already exists
   const existingUser = await User.findOne({ email: email.toLowerCase() });
@@ -17,34 +37,95 @@ const signup = asyncHandler(async (req, res) => {
     throw new ApiError(400, 'Email already registered');
   }
 
+  // Provider roles require admin approval before login access is granted
+  const isProviderRole = ['doctor', 'clinic_admin', 'lab_admin', 'receptionist'].includes(role);
+  const isApproved = !isProviderRole;
+
   // Generate OTP
   const otp = generateOTP();
   const otpExpires = addMinutes(new Date(), 10);
 
+  const userId = generateId();
+  let doctorId = null;
+  let clinicId = null;
+
+  if (role === 'doctor') {
+    doctorId = `doc-${generateId()}`;
+    try {
+      await Doctor.create({
+        id: doctorId,
+        name: full_name,
+        specialty: specialty || 'General Physician',
+        gender: 'male',
+        qualification: qualification || 'MBBS',
+        experience_years: Number(experience_years) || 1,
+        languages: Array.isArray(languages) ? languages : ['Nepali', 'English'],
+        clinic_name: clinic_name || 'Curovya Associated Clinic',
+        clinic_address: clinic_address || 'Kathmandu, Nepal',
+        consultation_fee: Number(consultation_fee) || 500,
+        photo_url: 'https://images.unsplash.com/photo-1612349316228-5942a9b489c2?w=400&q=80',
+        is_approved: false,
+      });
+    } catch (err) {
+      logger.warn('Failed creating Doctor record during signup:', err.message);
+    }
+  } else if (role === 'clinic_admin') {
+    clinicId = `clinic-${generateId()}`;
+    try {
+      await Clinic.create({
+        id: clinicId,
+        name: clinic_name || `${full_name}'s Clinic`,
+        address: clinic_address || 'Kathmandu, Nepal',
+        phone: phone,
+        departments: Array.isArray(departments) ? departments : ['General Medicine'],
+        is_approved: false,
+      });
+    } catch (err) {
+      logger.warn('Failed creating Clinic record during signup:', err.message);
+    }
+  }
+
   // Create user
   const user = await User.create({
-    id: generateId(),
+    id: userId,
     full_name,
     email: email.toLowerCase(),
     phone,
     password_hash: await hashPassword(password),
     role,
     is_verified: false,
+    is_approved: isApproved,
     otp,
     otp_expires: otpExpires,
     language: 'en',
+    doctor_id: doctorId,
+    clinic_id: clinicId,
+    license_number,
+    specialty,
+    qualification,
+    experience_years: Number(experience_years) || 0,
+    clinic_name,
+    clinic_address,
+    consultation_fee: Number(consultation_fee) || 0,
+    languages: Array.isArray(languages) ? languages : [],
+    lab_name,
+    lab_address,
+    departments: Array.isArray(departments) ? departments : [],
+    test_categories: Array.isArray(test_categories) ? test_categories : [],
   });
 
   // Generate tokens
   const accessToken = generateAccessToken({
     sub: user.id,
     role: user.role,
+    doctor_id: user.doctor_id,
+    clinic_id: user.clinic_id,
   });
 
   // Cache user in Redis for quick access
   await redis.setSession(user.id, sanitizeUser(user.toObject()));
 
-  logger.info('User signed up successfully', { userId: user.id, email: user.email });
+  logger.info('User signed up successfully', { userId: user.id, email: user.email, role: user.role, isApproved });
 
   res.status(201).json({
     success: true,
@@ -76,6 +157,16 @@ const login = asyncHandler(async (req, res) => {
   const isPasswordValid = await verifyPassword(password, user.password_hash);
   if (!isPasswordValid) {
     throw new ApiError(401, 'Invalid email or password');
+  }
+
+  // Check if provider account is pending admin verification
+  if (['doctor', 'clinic_admin', 'lab_admin', 'receptionist'].includes(user.role) && !user.is_approved) {
+    return res.status(403).json({
+      success: false,
+      is_pending_approval: true,
+      message: 'Your provider account is pending verification by Curovya Admin. Access will be granted once your credentials are reviewed.',
+      user: sanitizeUser(user.toObject()),
+    });
   }
 
   // Generate tokens
