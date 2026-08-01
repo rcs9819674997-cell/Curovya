@@ -79,6 +79,9 @@ async function request<T>(
       }
       // Handle wrapped responses from Node.js backend
       if (data && typeof data === "object" && "success" in data) {
+        if ("access_token" in data) {
+          return data as T;
+        }
         const dataKeys = [
           "data", "user", "stats", "plan", "subscription", "appointment", "appointments",
           "queue_view", "queue", "prescription", "prescriptions", "doctors",

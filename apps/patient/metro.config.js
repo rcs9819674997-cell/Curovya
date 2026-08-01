@@ -19,7 +19,6 @@ config.resolver.blockList = [
   /.*\/.git\/.*$/,
   /node_modules\/.*\/windows\/.*/,
   /node_modules\/.*\/macos\/.*/,
-  /react-native-agora/,
 ];
 
 // ── Transformer ─────────────────────────────────────────────────────────

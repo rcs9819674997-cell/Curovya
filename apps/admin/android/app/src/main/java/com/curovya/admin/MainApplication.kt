@@ -1,4 +1,6 @@
-package com.curovya.hamrodoctor
+package com.curovya.admin
+
+import com.curovya.admin.BuildConfig
 
 import android.app.Application
 import android.content.res.Configuration

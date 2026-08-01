@@ -1,4 +1,6 @@
-package com.curovya.hamrodoctor
+package com.curovya.patient
+
+import com.curovya.patient.BuildConfig
 
 import android.app.Application
 import android.content.res.Configuration

@@ -1,4 +1,6 @@
-package com.curovya.hamrodoctor
+package com.curovya.provider
+
+import com.curovya.provider.BuildConfig
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

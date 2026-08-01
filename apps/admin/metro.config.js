@@ -14,17 +14,7 @@ config.cacheStores = [new FileStore({ root: path.join(root, "cache") })];
 // ── Resolver ────────────────────────────────────────────────────────────
 // Exclude directories that are irrelevant to the JS bundle from the
 // haste map. This reduces startup time, memory, and watcher load.
-const { resolve } = require("path");
-const exclusionList = (() => {
-  try {
-    return require("metro-config/src/defaults/exclusionList");
-  } catch {
-    // Fallback for older metro versions
-    return require("metro-config/src/defaults/blacklist");
-  }
-})();
-
-config.resolver.blockList = exclusionList([
+config.resolver.blockList = [
   // Platform-native build artifacts we never need in JS
   /.*\/android\/.*$/,
   /.*\/ios\/.*$/,
@@ -35,7 +25,7 @@ config.resolver.blockList = exclusionList([
   // Other platform shims inside node_modules
   /node_modules\/.*\/windows\/.*/,
   /node_modules\/.*\/macos\/.*/,
-]);
+];
 
 // ── Transformer ─────────────────────────────────────────────────────────
 config.transformer = {
