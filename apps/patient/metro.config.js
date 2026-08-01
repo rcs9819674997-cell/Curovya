@@ -12,22 +12,15 @@ config.cacheStores = [new FileStore({ root: path.join(root, "cache") })];
 
 // ── Resolver ────────────────────────────────────────────────────────────
 // Exclude directories that are irrelevant to the JS bundle.
-const exclusionList = (() => {
-  try {
-    return require("metro-config/src/defaults/exclusionList");
-  } catch {
-    return require("metro-config/src/defaults/blacklist");
-  }
-})();
-
-config.resolver.blockList = exclusionList([
+config.resolver.blockList = [
   /.*\/android\/.*$/,
   /.*\/ios\/.*$/,
   /.*\/__tests__\/.*$/,
   /.*\/.git\/.*$/,
   /node_modules\/.*\/windows\/.*/,
   /node_modules\/.*\/macos\/.*/,
-]);
+  /react-native-agora/,
+];
 
 // ── Transformer ─────────────────────────────────────────────────────────
 config.transformer = {

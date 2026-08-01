@@ -11,7 +11,7 @@
 import Constants from "expo-constants";
 import { Platform } from "react-native";
 
-export type AgoraRtcModule = typeof import("react-native-agora");
+export type AgoraRtcModule = any;
 
 // Expo Go sets `Constants.appOwnership === "expo"`. Standalone / dev builds
 // return "standalone" or "guest". Web has undefined.
